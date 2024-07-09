@@ -1,3 +1,4 @@
+import logging
 import os
 import ollama
 import click
@@ -60,6 +61,7 @@ def init(emod, mod):
     metadatas = []
 
     for e in tqdm(feed_entries, "Parsing the documents"):
+        logging.info(f"Processing {e.title}")
         title = e.title
         link = e.link
         content = e.summary
@@ -91,7 +93,7 @@ def main_loop(collection):
         prompt = input("User:\n")
         print("\n")
 
-        if prompt == "bye":
+        if prompt == "exit":
             break
 
         result = collection.query(
@@ -99,7 +101,7 @@ def main_loop(collection):
             n_results=3,
         )
 
-        system_task = "Your task is to answer based on The New Yourk Times news feed."
+        system_task = "Your task is to answer based on The Worthy News feed. Only give the answer to the question when related news are present."
         system_news = "\n\n".join(result["documents"][0])
 
         stream = ollama.chat(
